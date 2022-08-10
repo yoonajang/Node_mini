@@ -1,38 +1,37 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-
-
-
+const bodyParser = require('body-parser');
+const routers = require('./routes');
+const fs = require('fs');
+const port = 8080;
 const app = express();
 
-// 서버가 실행될 포트를 설정
-app.set('port', process.env.PORT || 3000);
+// 서울 시간으로 셋팅 (지역에 따라 시간 셋팅으로 변경 필요)
+const moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault('Asia/seoul');
 
-// 첫번째 인수로 주소를 넣지 않는다면, 모든 요청에서 실행되는 미들웨어
-app.use((req, res, next) => {
-    console.log('모든 요청에 다 실행됩니다.');
+app.use(cors()); 
+
+// 미들웨어 (가장 상위에 위치)
+const requestMiddleware = (req, res, next) => {
+    console.log(
+        moment().format("MM-DD HH:mm:ss"), `  [ip] ${req.ip}   [${req.method}]  ${req.rawHeaders[1]}   ${req.originalUrl}`
+    );
     next();
-})
+};
 
-// 주소에 대한 GET 요청이 올 때 어떤 동작을 할지 정의
-// req: 요청에 관한 정보가 들어 있는 객체
-// res: 응답에 관한 정보가 들어있는 객체
-app.get('/', (req, res, next) => {
-    //res.send('Hello, Express')
-    //res.sendFile(path.join(__dirname, '/index.html'));
-    console.log('GET / 요청에서만 실행됩니다.');
-    next();
-}, (req, res) => {
-    throw new Error('에러는 에러 처리 미들웨어로 갑니다.')
-});
 
-app.use((err, req, res, next) => {
-    console.error(err);
-    res.status(500).send(err.message);
-})
+app.use(express.static('static'));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(requestMiddleware);
+app.use('/', routers);
 
-// http 웹 서버와 동일
-app.listen(app.get('port'), () => {
-    console.log(app.get('port'), '번 포트에서 대기 중');
+// 테스트용
+app.listen(port, () => {
+    console.log(port, '포트로 서버가 켜졌어요!');
 });
