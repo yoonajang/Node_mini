@@ -4,7 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const routers = require('./routes');
 const fs = require('fs');
-const port = 8080;
+const port = 3000;
 const app = express();
 
 // 서울 시간으로 셋팅 (지역에 따라 시간 셋팅으로 변경 필요)
