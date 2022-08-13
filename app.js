@@ -30,4 +30,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestMiddleware);
 app.use('/api', routers);
 
-app.listen(port, () => console.log(`${port} 열림`));
+app.listen(port, () => {
+    console.log(port, '포트로 서버가 켜졌어요!');
+});
