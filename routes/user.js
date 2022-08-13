@@ -1,11 +1,76 @@
 const express = require('express');
 const router = express.Router();
+const { Op } = require("sequelize");
+const { User } = require("../models");
+const jwt = require('jsonwebtoken');
+const user = require('../models/user');
+// const authMiddleware = require('../middleware/auth-middleware');
 
 
-router.post('/', async (req, res, next) => {
+// 암호화, 회원가입시 기준 필요
+// 회원가입 
+router.post('/signup', async (req, res) => {
+    const { userId, nickname, password, passwordCheck } = req.body;
 
-    res.send("<h1>Express server Start</h1>")
+    console.log(userId, nickname, password, passwordCheck)
+
+    if (password !== passwordCheck) {
+        res.status(400).send({ message: "fail"});
+        return;
+      }
+
+    // userId or nickname이 동일한게 이미 있는지 확인하기 위해 가져온다.
+    const existsUsers = await User.findAll({
+        where: {
+        [Op.or]: [{ userId }, { nickname }],
+        },
+    });
+    if (existsUsers.length) {
+        res.status(400).send({ message: "fail"});
+        return;
+    }
+
+    await User.create({ userId, nickname, password });
+    res.status(201).send({message: "true"});
 });
+
+
+// 로그인
+router.post("/login", async (req, res) => {
+    const { userId, password } = req.body;
+  
+    const userinfo = await User.findOne({
+      where: {
+        userId,
+      },
+    });
+  
+
+    if (!userinfo || password !== userinfo.password) {
+        res.status(400).send({ message: "fail"});
+        return;
+    }
+
+    // 토큰 생성
+    let token = jwt.sign({ 
+        id: userinfo.id, 
+        nickname: userinfo.nickname 
+    }, process.env.TOKEN)
+
+    // 유저정보
+    let user = {
+        id : userinfo.id,
+        userId : userinfo.userId,
+        nickname : userinfo.nickname
+    }
+
+    res.cookie("x_auth", token)
+        .status(200)
+        .json({message : "true", user, token})
+  });
+
+
+
 
 module.exports = router;
 

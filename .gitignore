@@ -3,3 +3,11 @@ node_modules
 
 # ENV
 .env
+
+# Database
+config/
+
+# etc
+migrations/
+seeders/
+

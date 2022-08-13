@@ -3,11 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const routers = require('./routes');
+const mysql = require("mysql2");
 const fs = require('fs');
-const port = 3000;
 const app = express();
-
-// 서울 시간으로 셋팅 (지역에 따라 시간 셋팅으로 변경 필요)
+const port = 3000
 const moment = require('moment');
 require('moment-timezone');
 moment.tz.setDefault('Asia/seoul');
@@ -29,9 +28,6 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestMiddleware);
-app.use('/', routers);
+app.use('/api', routers);
 
-// 테스트용
-app.listen(port, () => {
-    console.log(port, '포트로 서버가 켜졌어요!');
-});
+app.listen(port, () => console.log("포트켜지 "));
