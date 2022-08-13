@@ -7,9 +7,19 @@ const mysql = require("mysql2");
 const fs = require('fs');
 const app = express();
 const port = 3000
+const { sequelize } = require('./models');
+
 const moment = require('moment');
 require('moment-timezone');
 moment.tz.setDefault('Asia/seoul');
+sequelize
+    .sync({ force: false})
+    .then(() => {
+        console.log('데이터 베이스 연결성공');
+    })
+    .catch(err => {
+        console.error(err);
+    });
 
 app.use(cors()); 
 
