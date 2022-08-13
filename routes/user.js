@@ -64,8 +64,8 @@ router.post("/login", async (req, res) => {
         nickname : userinfo.nickname
     }
 
-    res.cookie("x_auth", token)
-        .status(200)
+    // res.cookie("x_auth", token)
+    res.status(200)
         .json({message : "true", user, token})
   });
 
