@@ -17,9 +17,9 @@ jobs:
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.DEMO_SSH_IP_KY }}
+          host: ${{ secrets.DEMO_SSH_IP }}
           username: ${{ secrets.DEMO_SSH_ID }}
-          KEY: ${{ secrets.DEMO_SSH_KEY_KY }}
+          KEY: ${{ secrets.DEMO_SSH_KEY }}
           port: ${{ secrets.DEMO_SSH_PORT }}
           script: |
             cd /home/ubuntu/Node_mini
