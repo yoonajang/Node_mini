@@ -21,9 +21,12 @@ router.get('/main/:postId', authMiddleware, async (req, res) => {
     const post = await Post.findOne({where: {postId}})
     const comment = await Comment.findAll({where: {postId}})
 
-    await Comment.findAll({where: {postId}})
-        .then(comment => {
-            res.status(201).send({message: "true", post });})
+    // 게시글에서 찾았는데 없는경우 실패알림
+    if (!post || !comment) {
+        return res.status(400).send({message: "fail: 해당 내용이 없습니다."})
+    }
+
+    res.status(200).send({message: "true", post, comment });
 
 });
 
@@ -62,6 +65,13 @@ router.patch('/edit', authMiddleware, async (req, res) => {
 
     const post = await Post.findOne({where: {postId}})
 
+    // 작동되는지 확인 할것
+    // await Post.findOne({where: {postId}})
+    //     .catch((err) => {
+    //         return res.status(400).send({message: "fail: 게시글이 없습니다."})
+    //     })
+
+
     // 게시글에서 찾았는데 없는경우 실패알림
     if (!post) {
         return res.status(400).send({message: "fail: 게시글이 없습니다."})
@@ -72,8 +82,8 @@ router.patch('/edit', authMiddleware, async (req, res) => {
         return res.status(400).send({message: "fail: 작성자가 아닙니다."})
     }
 
-    Post
-        .update({title, content}, {where: {postId}})
+    await Post.update({title, content}, {where: {postId}})
+    await Post.findOne({where: {postId}})
         .then(post => {
             res.status(200).send({message: "true", post });})
 
@@ -98,7 +108,7 @@ router.delete('/delete', authMiddleware, async (req, res) => {
     }
 
     await Post.destroy({ where: {postId} })
-        .then(res.status(201).send({message: "true"}))
+        .then(res.status(200).send({message: "true"}))
    
 });
 

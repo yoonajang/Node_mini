@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
     },
     postId: DataTypes.INTEGER,
-    content: DataTypes.STRING,
+    comment: DataTypes.STRING,
     writer: DataTypes.STRING
   }, {
     sequelize,
