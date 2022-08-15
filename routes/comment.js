@@ -6,7 +6,7 @@ const {
     writeComment,
     editComment,
     deleteComment
-} = require("../controllers/userController");
+} = require("../controllers/commentController");
 
 // 코멘트 작성 (조건 추가하기)
 router.post('/write', authMiddleware, writeComment)

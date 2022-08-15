@@ -8,7 +8,7 @@ const {
     writePost, 
     editPost,
     deletePost
-} = require("../controllers/userController");
+} = require("../controllers/postController");
   
 
 // 메인페이지 (글전체조회)
