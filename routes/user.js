@@ -7,6 +7,8 @@ const { User } = require("../models");
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('../middleware/auth-middleware');
 
+
+// 회원가입 유효성 검사
 const userSchema = Joi.object({
     // 아이디 양식
     // 2-15자 / 숫자, 영어, 한국어와 언더스코어, 공백 허용 
@@ -36,7 +38,7 @@ const userSchema = Joi.object({
 
 });
 
-// 암호화, 회원가입시 기준 필요
+
 // 회원가입 
 router.post('/signup', async (req, res) => {
     try {
@@ -105,14 +107,13 @@ router.post("/login", async (req, res) => {
                 nickname : user.nickname
             }, 
             token})
-    });
+});
 
 
 // 로그인 여부확인
 router.get("/islogin",authMiddleware, async (req, res) => {
     const { user } = res.locals;
-
-    console.log(user)
+    // console.log(user)
     
     res.status(200)
         .json({
@@ -124,6 +125,5 @@ router.get("/islogin",authMiddleware, async (req, res) => {
     });
 
 });
-
 
 module.exports = router;
