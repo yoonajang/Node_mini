@@ -6,6 +6,28 @@ const authMiddleware = require('../middleware/auth-middleware');
 
 // 메인페이지 (글전체조회)
 const getPost = (req, res) => {
+
+    /*========================================================================================================
+    /* 	#swagger.tags = ['Post']
+        #swagger.summary = '게시글 전체조회'
+        #swagger.description = '게시글 전체조회' */
+
+    /*  #swagger.responses[200] =  {  
+            description: '게시글 조회',
+            schema: { "message" : "true",        
+                        "posts": { "postId" : 1, 
+                                    "title" : "제목",
+                                    "content" : "내용입니다.",
+                                    "writer" : "닉네임",
+                                    "createdAt" : 2022-02-02,
+                                    "updatedAt" : 2022-02-02 }}}
+
+    /*  #swagger.responses[400] = { 
+            description: '게시글 조회 실패',
+            schema: { "message" : "fail" }}
+
+    ========================================================================================================*/
+
     try {
         Post.findAll().then(post => {
         res.status(201).send({message: "true", post });})

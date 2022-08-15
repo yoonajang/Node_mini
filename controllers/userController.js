@@ -42,7 +42,30 @@ const userSchema = Joi.object({
 
 // 회원가입 
 const signup = async (req, res) => {
+    /*========================================================================================================
+    /* 	#swagger.tags = ['User']
+        #swagger.summary = '회원가입'
+        #swagger.description = '회원가입' */
+
+    /*	#swagger.parameters['payload'] = {
+            in: 'body',
+            description: 'Request Body',
+            required: true,
+            schema: { "userId": "아이디", "password": "비밀번호", "passwordCheck": "비밀번호","nickname": "닉네임" }
+    } 
+
+    /*  #swagger.responses[201] =  {  
+            description: '회원가입 성공',
+            schema: { "message" : "true",        
+                        "user": { "id": 1, "userId": "아이디", "nickname": "닉네임" }}}
+
+    /*  #swagger.responses[400] = { 
+            description: '회원가입 실패',
+            schema: { "message" : "fail" }}
+
+    ========================================================================================================*/
     try {
+
         const { userId, nickname, password, passwordCheck } =
         await userSchema.validateAsync(req.body);
 
@@ -64,18 +87,53 @@ const signup = async (req, res) => {
             return res.status(400).send({ message: "fail: 아이디 또는 닉네임 중복되었습니다."});
         }
 
-        await User.create({ userId, nickname, password: hashPassword });
-        res.status(201).send({message: "true"});
+
+        const newUser = await User.create({ userId, nickname, password: hashPassword });
+        const newUserId = newUser.null
+        await User
+            .findOne({where: {id: newUserId}})
+            .then(userInfo => {
+                res.status(201)
+                    .send({message: "true", 
+                            user: {
+                                id: userInfo.id,
+                                userId: userInfo.userId,
+                                nickname: userInfo.nickname
+                            }});})
+
     } catch (error) {
         res.status(400).send({ message: "fail"});
-    }
-    
+    }   
+
 };
 
 
 // 로그인
 const login = async (req, res) => {
+    /*========================================================================================================
+    /* 	#swagger.tags = ['User']
+        #swagger.summary = '로그인'
+        #swagger.description = '로그인' */
+
+    /*	#swagger.parameters['payload'] = {
+            in: 'body',
+            description: 'Request Body',
+            required: true,
+            schema: { "userId": "아이디", "password": "비밀번호" }
+    } 
+
+    /*  #swagger.responses[200] =  {  
+            description: '로그인 성공',
+            schema: { "message" : "true",        
+                        "user": { "id": 1, "userId": "아이디", "nickname": "닉네임" }}}
+
+    /*  #swagger.responses[400] = { 
+            description: '로그인 실패',
+            schema: { "message" : "fail" }}
+
+    ========================================================================================================*/
     try {
+
         const { userId, password } = req.body;
         
         const user = await User.findOne({
@@ -105,6 +163,7 @@ const login = async (req, res) => {
             .json({
                 message: "true",
                 user: {
+                    id: user.id,
                     userId : user.userId,
                     nickname : user.nickname
                 }, 
@@ -117,6 +176,21 @@ const login = async (req, res) => {
 
 // 로그인 유효성 검사
 const isLogin = async (req, res) => {
+    /*========================================================================================================
+    /* 	#swagger.tags = ['User']
+        #swagger.summary = '로그인 유효성 검사'
+        #swagger.description = '로그인 유효성 검사'
+
+    /*  #swagger.responses[200] =  {  
+            description: '로그인 유효성 검사 성공',
+            schema: { "message" : "true",        
+                        "user": { "id": 1, "userId": "아이디", "nickname": "닉네임" }}}
+
+    /*  #swagger.responses[401] = { 
+            description: '로그인 유효성 검사  실패',
+            schema: { "message" : "fail" }}
+    ========================================================================================================*/
+
     try {
         const { user } = res.locals;
         // console.log(user)
@@ -125,12 +199,13 @@ const isLogin = async (req, res) => {
             .json({
                 message: "true",
                 user: {
+                    id: user.id,
                     userId: user.userId, 
                     nickname: user.nickname
                 }
         });
     } catch (error) {
-        res.status(400).send({ message: "fail"});
+        res.status(401).send({ message: "fail"});
     }
 };
 

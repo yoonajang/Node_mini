@@ -8,6 +8,9 @@ const fs = require('fs');
 const app = express();
 const port = 3000
 const { sequelize } = require('./models');
+const swaggerUi = require("swagger-ui-express");  // swagger-ui-express 설치
+const swaggerFile = require("./swagger-output");  // swagger-autogen 설치
+
 
 const moment = require('moment');
 require('moment-timezone');
@@ -32,6 +35,7 @@ const requestMiddleware = (req, res, next) => {
 };
 
 
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 app.use(express.static('static'));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
