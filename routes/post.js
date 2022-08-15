@@ -63,19 +63,19 @@ router.patch('/edit', authMiddleware, async (req, res) => {
     const { user } = res.locals
     const { postId, title, content } = req.body;
 
-    const post = await Post.findOne({where: {postId}})
+    // const post = await Post.findOne({where: {postId}})
 
-    // 작동되는지 확인 할것
-    // await Post.findOne({where: {postId}})
-    //     .catch((err) => {
-    //         return res.status(400).send({message: "fail: 게시글이 없습니다."})
-    //     })
+    //작동되는지 확인 할것
+    await Post.findOne({where: {postId}})
+        .catch((err) => {
+            return res.status(400).send({message: "fail: 게시글이 없습니다."})
+        })
 
 
-    // 게시글에서 찾았는데 없는경우 실패알림
-    if (!post) {
-        return res.status(400).send({message: "fail: 게시글이 없습니다."})
-    }
+    // // 게시글에서 찾았는데 없는경우 실패알림
+    // if (!post) {
+    //     return res.status(400).send({message: "fail: 게시글이 없습니다."})
+    // }
 
     // 로그인 작성자와 게시물 작성자가 다른 경우 실패알림
     if(post.writer != user.userId){
