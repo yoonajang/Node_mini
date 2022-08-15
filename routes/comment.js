@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { Post } = require("../models");
 const { Comment } = require("../models");
 const authMiddleware = require('../middleware/auth-middleware');
+
 
 // 코멘트 작성 (조건 추가하기)
 router.post('/write', authMiddleware, async (req, res) => {
@@ -21,6 +21,7 @@ router.post('/write', authMiddleware, async (req, res) => {
 
 });
 
+
 // 코멘트 수정
 router.patch('/edit', authMiddleware, async (req, res) => {
     const { user } = res.locals
@@ -38,7 +39,6 @@ router.patch('/edit', authMiddleware, async (req, res) => {
         return res.status(400).send({message: "fail: 작성자가 아닙니다."})
     }
 
-    console.log(comment, "코멘트")
     let message = "true"
 
     await Comment.update({comment}, {where: {commentId}})
@@ -46,9 +46,8 @@ router.patch('/edit', authMiddleware, async (req, res) => {
             .then(comment => {
                 console.log(comment)
                 res.status(200).send({message, comment});})
-
-
 });
+
 
 // 코멘트 삭제
 router.delete('/delete', authMiddleware, async (req, res) => {
@@ -71,8 +70,5 @@ router.delete('/delete', authMiddleware, async (req, res) => {
         .then(res.status(200).send({message: "true"}))
    
 });
-
-
-
 
 module.exports = router;

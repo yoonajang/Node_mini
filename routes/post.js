@@ -1,13 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { Post } = require("../models");
-const { Comment } = require("../models");
+const { Comment } = require("../models"); 
 const authMiddleware = require('../middleware/auth-middleware');
 
 // 메인페이지 (글전체조회)
 router.get('/main', (req, res) => {
-
-    // 동일한 IP가 1분내 20회이상 접속시, 에러발생 ( =====> 조건 추가하기)
 
     Post.findAll().then(post => {
         res.status(201).send({message: "true", post });})
@@ -44,10 +42,6 @@ router.post('/write', authMiddleware, async (req, res) => {
         return res.status(400).send({message: "fail: 중복된 게시글이 있습니다."})
     }
 
-    // 동일한 작성자가 1시간안에 20개 이상 작성시 에러발생( =====> 조건 추가하기)
-
-
-
     const newPost = await Post.create({ title, content, writer });
     const newPostId = newPost.null
     await Post
@@ -63,19 +57,12 @@ router.patch('/edit', authMiddleware, async (req, res) => {
     const { user } = res.locals
     const { postId, title, content } = req.body;
 
-    // const post = await Post.findOne({where: {postId}})
+    const post = await Post.findOne({where: {postId}})
 
-    //작동되는지 확인 할것
-    await Post.findOne({where: {postId}})
-        .catch((err) => {
-            return res.status(400).send({message: "fail: 게시글이 없습니다."})
-        })
-
-
-    // // 게시글에서 찾았는데 없는경우 실패알림
-    // if (!post) {
-    //     return res.status(400).send({message: "fail: 게시글이 없습니다."})
-    // }
+    // 게시글에서 찾았는데 없는경우 실패알림
+    if (!post) {
+        return res.status(400).send({message: "fail: 게시글이 없습니다."})
+    }
 
     // 로그인 작성자와 게시물 작성자가 다른 경우 실패알림
     if(post.writer != user.userId){
@@ -111,7 +98,5 @@ router.delete('/delete', authMiddleware, async (req, res) => {
         .then(res.status(200).send({message: "true"}))
    
 });
-
-
 
 module.exports = router;
