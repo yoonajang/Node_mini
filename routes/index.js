@@ -1,12 +1,11 @@
-
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const userRouter = require('./user');
+const userRouter = require("./user");
 
 // 앞에 /로 시작됨
-router.use('/user', userRouter);
-
-
+router.use("/user", userRouter);
 
 module.exports = router;
+
+// test 1
