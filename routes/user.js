@@ -2,8 +2,6 @@ const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/auth-middleware");
 
-const { signup, login, isLogin } = require("../controllers/userController");
-
 // 회원가입2
 router.post("/signup", signup);
 
@@ -20,3 +18,5 @@ router.get("/islogin", authMiddleware, isLogin);
 router.post("/login", login);
 
 module.exports = router;
+
+const { signup, login, isLogin } = require("../controllers/userController");
