@@ -1,33 +1,33 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Node.js CI
+# name: Node.js CI
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
 
-jobs:
-  build:
-    # runs-on: ubuntu-18.04
-    runs-on: ubuntu-latest
+# jobs:
+#   build:
+#     # runs-on: ubuntu-18.04
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEMO_SSH_IP }}
-          username: ${{ secrets.DEMO_SSH_ID }}
-          KEY: ${{ secrets.DEMO_SSH_KEY }}
-          port: ${{ secrets.DEMO_SSH_PORT }}
-          script: |
-            cd /home/ubuntu/Node_mini
-            git config --global --add safe.directory /home/ubuntu/Node_mini
-            sudo git pull
-            sudo npm update
-            sudo npm install
-            sudo pm2 reload all
+#     steps:
+#       - name: Deploy
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.DEMO_SSH_IP }}
+#           username: ${{ secrets.DEMO_SSH_ID }}
+#           KEY: ${{ secrets.DEMO_SSH_KEY }}
+#           port: ${{ secrets.DEMO_SSH_PORT }}
+#           script: |
+#             cd /home/ubuntu/Node_mini
+#             git config --global --add safe.directory /home/ubuntu/Node_mini
+#             sudo git pull
+#             sudo npm update
+#             sudo npm install
+#             sudo pm2 reload all
