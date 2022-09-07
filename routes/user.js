@@ -4,19 +4,19 @@ const authMiddleware = require("../middleware/auth-middleware");
 
 const { signup, login, isLogin } = require("../controllers/userController");
 
+// c
+
 // 회원가입
 router.post("/signup", signup);
 
+//b
+
 // 로그인
 router.post("/login", login);
+
+// a
 
 // 로그인 유효성 검사
 router.get("/islogin", authMiddleware, isLogin);
 
 module.exports = router;
-
-// a
-
-// b
-
-// c
