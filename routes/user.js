@@ -10,13 +10,9 @@ router.post("/signup", signup);
 // 로그인
 router.post("/login", login);
 
+// a
+
 // 로그인 유효성 검사
 router.get("/islogin", authMiddleware, isLogin);
 
 module.exports = router;
-
-// a
-
-// b
-
-// c
