@@ -65,18 +65,18 @@ const writePost = async (req, res) => {
         const is_saved = true;
 
         const samePost = await Posts.findOne({where: {title, content, writer}})
-        console.log(samePost)
-
-        // DB에 동일한 제목, 내용이 임시 저장된 경우, 저장 완료
-        if(samePost.is_saved == false){
-            await Posts.update({is_saved},{where: {title, content, writer}})
+        console.log(samePost, 'null 인가요?')
+        
+        if(samePost){
+            // DB에 동일한 제목, 내용이 임시 저장된 경우, 저장 완료
+            if(samePost.is_saved == false){
+                await Posts.update({is_saved},{where: {title, content, writer}})
+            }
+            // DB에 동일한 제목, 내용, 작성자인 경우, 에러발생
+            if(samePost.is_saved == true){
+                return res.status(400).send({message: "fail: 중복된 게시글이 있습니다."})
+            }
         }
-
-        // DB에 동일한 제목, 내용, 작성자인 경우, 에러발생
-        if(samePost.is_saved == true){
-            return res.status(400).send({message: "fail: 중복된 게시글이 있습니다."})
-        }
-
         const newPost = await Posts.create({ title, content, writer });
         await Posts
             .findOne({where: {postId: newPost.postId}})
