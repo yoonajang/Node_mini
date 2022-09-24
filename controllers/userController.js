@@ -3,7 +3,7 @@ const router = express.Router();
 const Joi = require("joi");
 const CryptoJS = require("crypto-js");
 const { Op } = require("sequelize");
-const { User } = require("../models");
+const { Users } = require("../models");
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('../middleware/auth-middleware');
 
@@ -78,30 +78,35 @@ const signup = async (req, res) => {
         }
 
         // userId or nickname 중복 확인
-        const existsUsers = await User.findAll({
+        const existsUsers =await Users.findAll({
             where: {
             [Op.or]: [{ userId }, { nickname }],
             },
-        });
+        })
         if (existsUsers.length) {
             return res.status(400).send({ message: "fail: 아이디 또는 닉네임 중복되었습니다."});
         }
 
 
-        const newUser = await User.create({ userId, nickname, password: hashPassword });
-        const newUserId = newUser.null
-        await User
-            .findOne({where: {id: newUserId}})
+        const newUser = await Users.create({ userId, nickname, password: hashPassword });
+
+        await Users
+            .findOne({where: {userId}})
             .then(userInfo => {
+                console.log(userInfo, '회원가입 됬다')
                 res.status(201)
                     .send({message: "true", 
                             user: {
-                                id: userInfo.id,
                                 userId: userInfo.userId,
-                                nickname: userInfo.nickname
+                                nickname: userInfo.nickname, 
+                                velogtitle:userInfo.velogtitle, 
+                                email:userInfo.email, 
+                                gitaddress: userInfo.gitaddress, 
+
                             }});})
 
     } catch (error) {
+        console.log(error)
         res.status(400).send({ message: "fail"});
     }   
 
@@ -135,10 +140,12 @@ const login = async (req, res) => {
     try {
 
         const { userId, password } = req.body;
+
+        console.log( userId, password, '회원가입')
         
-        const user = await User.findOne({
+        const user = await Users.findOne({
         where: {
-            userId,
+            userId
         },
         });
         
@@ -151,7 +158,7 @@ const login = async (req, res) => {
         }
 
         // 토큰 생성
-        const payload = { userId: user.id };
+        const payload = { userId: user.userId };
         const secret = process.env.TOKEN;
         const options = {
                         issuer: "miniProject_BE", 
@@ -193,16 +200,54 @@ const isLogin = async (req, res) => {
 
     try {
         const { user } = res.locals;
-        // console.log(user)
-        
+
         res.status(200)
             .json({
                 message: "true",
-                user: {
-                    id: user.id,
-                    userId: user.userId, 
-                    nickname: user.nickname
-                }
+                user
+        });
+    } catch (error) {
+        res.status(401).send({ message: "fail"});
+    }
+};
+
+
+// 추가 데이터 조회
+const getSetting = async (req, res) => {
+    try {
+        const { user } = res.locals;
+
+        console.log(user)
+
+        res.status(200)
+            .json({
+                message: "true",
+                user
+        });
+    } catch (error) {
+        res.status(401).send({ message: "fail"});
+    }
+};
+
+// 추가 데이터 수정
+const editSetting = async (req, res) => {
+
+    try {
+        const { user } = res.locals;
+        const userId = user.userId;
+        const {velogtitle, email, gitaddress} = req.body;
+        
+        await Users.update({velogtitle, email, gitaddress}, {where: {userId}})
+
+        const newSetting = await Users.findOne(
+            { where: {userId},
+            attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }    
+        },)
+
+        res.status(200)
+            .json({
+                message: "true",
+                user : newSetting
         });
     } catch (error) {
         res.status(401).send({ message: "fail"});
@@ -210,8 +255,6 @@ const isLogin = async (req, res) => {
 };
 
 module.exports = {
-    signup, 
-    login,
-    isLogin
+    signup, login, isLogin, getSetting, editSetting
 };
 
