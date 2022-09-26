@@ -56,7 +56,7 @@ const editComment = async (req, res) => {
 const deleteComment = async (req, res) => {
     try {
         const { user } = res.locals
-        const { commentId } = req.body;
+        const { commentId } = req.params;
 
         const comment = await Comments.findOne({where: {commentId}})
 

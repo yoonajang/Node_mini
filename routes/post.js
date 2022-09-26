@@ -35,7 +35,7 @@ router.post('/tempwrite', authMiddleware, tempWritePost)
 router.patch('/edit', authMiddleware, editPost)
 
 // 게시글 삭제
-router.delete('/delete', authMiddleware, deletePost)
+router.delete('/delete/:postId', authMiddleware, deletePost)
 
 // 좋아요
 router.post('/like/:postId', authMiddleware, likePost)

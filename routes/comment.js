@@ -17,6 +17,6 @@ router.patch('/edit', authMiddleware, editComment)
 
 
 // 코멘트 삭제
-router.delete('/delete', authMiddleware, deleteComment)
+router.delete('/delete/:commentId', authMiddleware, deleteComment)
 
 module.exports = router;

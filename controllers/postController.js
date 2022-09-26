@@ -151,7 +151,7 @@ const editPost = async (req, res) => {
 const deletePost = async (req, res) => {
     try {
         const { user } = res.locals
-        const { postId } = req.body;
+        const { postId } = req.params;
 
         const post = await Posts.findOne({where: {postId}})
 
