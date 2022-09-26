@@ -168,6 +168,7 @@ const deletePost = async (req, res) => {
         await Posts.destroy({ where: {postId} })
             .then(res.status(200).send({message: "true"}))
     } catch (error) {
+        console.log(error)
         res.status(400).send({ message: "fail"});
     }
 };
