@@ -291,7 +291,7 @@ const deleteImage = async (req, res) => {
 
       console.log(photoFileURL)
       const deleteImageFile = photoFileURL.split('/')[4];
-      const keyURL = 'image/' + decodeURI(deleteImageFile).replaceAll('+', ' ');
+      const keyURL = 'image/' + decodeURI(deleteImageFile).replace('+', ' ');
       console.log(keyURL)
       s3.deleteObject(
         {
