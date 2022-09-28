@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/auth-middleware');
+const imageUploader = require('../S3/imageUploader');
 
 const {
     getPost, 
@@ -53,9 +54,9 @@ router.get('/recent', recentPost)
 router.get('/mypage',authMiddleware, myPage)
 
 // 이미지 업로드
-router.post('/image', uploadImage)
+router.post('/image/:postId', imageUploader.single('image'), uploadImage)
 
 // 이미지 제거
-router.delete('/image', deleteImage)
+router.delete('/image/:image_id', deleteImage)
 
 module.exports = router;

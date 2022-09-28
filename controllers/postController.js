@@ -1,5 +1,13 @@
 const { Op } = require("sequelize");
-const { Posts, Comments, Likes } = require("../models");
+const { Posts, Comments, Likes, Images } = require("../models");
+
+// 이미지
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3({
+  region: process.env.AWS_REGION,
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_ACCESS_SECRET_KEY,
+});
 
 // 메인페이지 (글전체조회)
 const getPost = (req, res) => {
@@ -256,44 +264,53 @@ const myPage = async (req, res) => {
 
 // 이미지 업로드
 const uploadImage = async (req, res) => {
-    // try {
-    //     const { user } = res.locals
-    //     const { postId } = req.params;
-
-    //     await Likes.findOne({where: {postId, userId: user.userId}}).then((like) => {  
-    //         if(!like) {
-    //             Likes.create({postId, userId: user.userId})
-    //         } else {
-    //             Likes.destroy({where: {postId, userId: user.userId}})
-
-    //         }
-    //     })
-
-    //     return res.status(200).send({message: "true"})
-    // } catch (error) {
-    //     res.status(400).send({ message: "fail"});
-    // }
+    try {
+        const {postId} = req.params;
+        const image = req.file;
+        console.log(image);
+        await Images.create({ imageUrl: image.location, postId });
+        
+        return res.status(200).send({message: "true"})
+    } catch (error) {
+        res.status(400).send({ message: "fail"});
+    }
 };
 
 // 이미지 제거
 const deleteImage = async (req, res) => {
-    // try {
-    //     const { user } = res.locals
-    //     const { postId } = req.params;
+    try {
+    const { image_id } = req.params;
+    const existImage = await Images.findByPk(image_id);
+    console.log
 
-    //     await Likes.findOne({where: {postId, userId: user.userId}}).then((like) => {  
-    //         if(!like) {
-    //             Likes.create({postId, userId: user.userId})
-    //         } else {
-    //             Likes.destroy({where: {postId, userId: user.userId}})
+    if (existImage) {
+      // 모든 DB에서 이미지 삭제 코드 작성 추가!!!!
 
-    //         }
-    //     })
+      const photoFileURL = existImage.imageUrl;
 
-    //     return res.status(200).send({message: "true"})
-    // } catch (error) {
-    //     res.status(400).send({ message: "fail"});
-    // }
+      console.log(photoFileURL)
+      const deleteImageFile = photoFileURL.split('/')[4];
+      const keyURL = 'image/' + decodeURI(deleteImageFile).replaceAll('+', ' ');
+      console.log(keyURL)
+      s3.deleteObject(
+        {
+          Bucket: process.env.AWS_BUCKET_NAME,
+          Key: keyURL,
+        },
+        (err, data) => {
+          if (err) {
+            throw err;
+          }
+        }
+      );
+      await Images.destroy({ where: { ImageId: existImage.ImageId } });
+
+      return res.status(200).send({message: "true"})
+    }
+    } catch (error) {
+        console.log(error)
+        res.status(400).send({ message: "fail :" + error.message});
+    }
 };
 
 

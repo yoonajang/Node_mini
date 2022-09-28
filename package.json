@@ -6,7 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "swagger-autogen": "node ./swagger.js"
-    
   },
   "repository": {
     "type": "git",
@@ -20,6 +19,7 @@
   },
   "homepage": "https://github.com/yoonajang/Node_mini#readme",
   "dependencies": {
+    "aws-sdk": "^2.895.0",
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
     "dotenv": "^16.0.1",
@@ -28,6 +28,8 @@
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.35",
+    "multer": "^1.4.2",
+    "multer-s3": "^2.9.0",
     "mysql2": "^2.3.3",
     "request-ip": "^3.3.0",
     "sequelize": "^6.21.3",
@@ -35,7 +37,7 @@
     "swagger-ui-express": "^4.5.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.19",
+    "nodemon": "^2.0.20",
     "sequelize-cli": "^6.4.1"
   }
 }
