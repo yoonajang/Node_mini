@@ -272,6 +272,7 @@ const uploadImage = async (req, res) => {
         
         return res.status(200).send({message: "true"})
     } catch (error) {
+        console.log(error)
         res.status(400).send({ message: "fail"});
     }
 };
