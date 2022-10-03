@@ -1,11 +1,9 @@
-const express = require('express');
-const router = express.Router();
 const Joi = require("joi");
 const CryptoJS = require("crypto-js");
 const { Op } = require("sequelize");
 const { Users } = require("../models");
 const jwt = require('jsonwebtoken');
-const authMiddleware = require('../middleware/auth-middleware');
+const passport = require('passport');
 
 
 // 회원가입 유효성 검사
@@ -180,6 +178,52 @@ const login = async (req, res) => {
     }
 };
 
+// 카카오 로그인
+const kakaoCallback = (req, res, next) => {
+    try {
+        console.log('userController통과중')
+      passport.authenticate(
+        'kakao', {  failureRedirect: '/'},
+        async (err, user) => {
+          if (err) return next(err);
+            console.log(user, user.email, '회원 들어왔습니다.')
+
+          const userInfo = await Users.findOne({
+            where: {
+                email: user.email
+            },
+            });
+        
+            // 회원 추가데이터가 없는 경우, 회원가입 유도
+          if (!userInfo.gitaddress) {
+            // return res.redirect('http://localhost:3000/api/user/setting');
+            throw new Error('추가데이터 작성이 필요합니다.')
+          }
+  
+        // 토큰 생성
+        const payload = { userId: user.userId };
+        const secret = process.env.TOKEN;
+        const options = {
+                        issuer: "miniProject_BE", 
+                        expiresIn: "1d", };
+        const token = jwt.sign( payload, secret, options ) 
+
+        return res.status(200)
+        .json({
+            message: "true",
+            user,
+            token,
+            });
+        }
+      )(req, res, next);
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(400)
+        .json({ message: 'fail: ' + error.message });
+    }
+  };
+  
 
 // 로그인 유효성 검사
 const isLogin = async (req, res) => {
@@ -255,6 +299,6 @@ const editSetting = async (req, res) => {
 };
 
 module.exports = {
-    signup, login, isLogin, getSetting, editSetting
+    signup, login, isLogin, getSetting, editSetting, kakaoCallback
 };
 

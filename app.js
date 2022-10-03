@@ -6,6 +6,7 @@ const routers = require("./routes");
 const mysql = require("mysql2");
 const fs = require("fs");
 const app = express();
+const passport = require('./passport');
 const port = 3000;
 const { sequelize } = require("./models");
 const swaggerUi = require("swagger-ui-express"); // swagger-ui-express 설치
@@ -23,6 +24,7 @@ sequelize
     console.error(err);
   });
 
+passport(app); // 소셜로그인 연결
 app.use(cors());
 
 // 미들웨어 (가장 상위에 위치)

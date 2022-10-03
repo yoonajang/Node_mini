@@ -17,6 +17,14 @@ module.exports = (sequelize, DataTypes) => {
     primaryKey: true,
     allowNull: false
   },
+  provider: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  provider_uid: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
     nickname: {
       type: DataTypes.STRING,
       allowNull: false,
