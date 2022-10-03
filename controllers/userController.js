@@ -86,7 +86,7 @@ const signup = async (req, res) => {
         }
 
 
-        const newUser = await Users.create({ userId, nickname, password: hashPassword });
+        const newUser = await Users.create({ provider: 'mini',provider_uid:'1', userId, nickname, password: hashPassword });
 
         await Users
             .findOne({where: {userId}})
