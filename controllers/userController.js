@@ -86,7 +86,7 @@ const signup = async (req, res) => {
         }
 
 
-        const newUser = await Users.create({ provider: 'mini',provider_uid:'1', userId, nickname, password: hashPassword });
+        const newUser = await Users.create({ provider: 'mini',provider_uid:'0', userId, nickname, password: hashPassword });
 
         await Users
             .findOne({where: {userId}})
@@ -197,7 +197,10 @@ const kakaoCallback = (req, res, next) => {
             // 회원 추가데이터가 없는 경우, 회원가입 유도
           if (!userInfo.gitaddress) {
             // return res.redirect('http://localhost:3000/api/user/setting');
-            throw new Error('추가데이터 작성이 필요합니다.')
+            // throw new Error('추가데이터 작성이 필요합니다.')
+            return res
+            .status(400)
+            .json({ message: 'fail: '});
           }
   
         // 토큰 생성
