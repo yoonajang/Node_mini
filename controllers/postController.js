@@ -196,7 +196,9 @@ const likePost = async (req, res) => {
             }
         })
 
-        return res.status(200).send({message: "true"})
+        const likes = await Likes.findAll({ where: {postId}})
+
+        return res.status(200).send({message: "true", like_count: likes.length  })
     } catch (error) {
         res.status(400).send({ message: "fail"});
     }
